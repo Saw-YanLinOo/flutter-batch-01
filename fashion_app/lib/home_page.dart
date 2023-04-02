@@ -9,9 +9,11 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-            SizedBox(height: 16,),
+            SizedBox(
+              height: 16,
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 children: [
                   Container(
@@ -26,7 +28,9 @@ class HomePage extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(width: 8,),
+                  SizedBox(
+                    width: 8,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -46,10 +50,41 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  Icon(Icons.notifications,size: 32,),
+                  Icon(
+                    Icons.notifications,
+                    size: 32,
+                  ),
                 ],
               ),
             ),
+            SizedBox(
+              height: 24,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Text(
+                    "Trending For You",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Spacer(),
+                  Text(
+                    "...",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Stack(children: [
+              Image.asset("assets/profile.png"),
+            ],),
           ],
         ),
       ),
