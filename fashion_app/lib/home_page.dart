@@ -11,28 +11,151 @@ class HomePage extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            SizedBox(
-              height: 16,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: HomeAppBarSection(),
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TrendingForYouSection(),
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 16,
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: HomeAppBarSection(),
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TrendingForYouSection(),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: RecommendedSection(),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+class RecommendedSection extends StatelessWidget {
+  const RecommendedSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              "Recommended",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Spacer(),
+            Text(
+              "...",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.pink.shade100.withOpacity(0.2),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    child: Image.asset("assets/shoe.png"),
+                  ),
+                  Text(
+                    "Shoe",
+                    style: TextStyle(
+                      color: Colors.pink.shade200,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.blue.shade100.withOpacity(0.2),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    child: Image.asset("assets/cactus.png"),
+                  ),
+                  Text(
+                    "Cactus",
+                    style: TextStyle(
+                      color: Colors.blue.shade200,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.blue.shade100.withOpacity(0.2),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    child: Image.asset("assets/cactus.png"),
+                  ),
+                  Text(
+                    "Cactus",
+                    style: TextStyle(
+                      color: Colors.blue.shade200,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 
 class TrendingForYouSection extends StatelessWidget {
   const TrendingForYouSection({Key? key}) : super(key: key);
@@ -66,8 +189,7 @@ class TrendingForYouSection extends StatelessWidget {
         Container(
           height: MediaQuery.of(context).size.height / 2,
           clipBehavior: Clip.hardEdge,
-          decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
           child: Stack(
             children: [
               Positioned.fill(
@@ -152,7 +274,6 @@ class TrendingForYouSection extends StatelessWidget {
   }
 }
 
-
 class HomeAppBarSection extends StatelessWidget {
   const HomeAppBarSection({Key? key}) : super(key: key);
 
@@ -202,4 +323,3 @@ class HomeAppBarSection extends StatelessWidget {
     );
   }
 }
-
