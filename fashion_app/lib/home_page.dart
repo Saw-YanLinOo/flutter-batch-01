@@ -1,3 +1,4 @@
+import 'package:fashion_app/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -6,12 +7,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("screen height :: ${MediaQuery.of(context).size.height / 2}");
-    print("screen width :: ${MediaQuery.of(context).size.width}");
-
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             children: [
               SizedBox(
@@ -34,7 +33,7 @@ class HomePage extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: RecommendedSection(),
+                child: RecommendedSection(title: "Recommended"),
               ),
             ],
           ),
@@ -45,8 +44,9 @@ class HomePage extends StatelessWidget {
 }
 
 class RecommendedSection extends StatelessWidget {
-  const RecommendedSection({Key? key}) : super(key: key);
+  const RecommendedSection({Key? key,required this.title}) : super(key: key);
 
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -54,7 +54,7 @@ class RecommendedSection extends StatelessWidget {
         Row(
           children: [
             Text(
-              "Recommended",
+              "$title",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -186,87 +186,93 @@ class TrendingForYouSection extends StatelessWidget {
         SizedBox(
           height: 16,
         ),
-        Container(
-          height: MediaQuery.of(context).size.height / 2,
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  "assets/outfit.jpeg",
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 15,
-                right: 15,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.pink.shade100,
-                    shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(4),
-                  child: Icon(
-                    FontAwesomeIcons.heart,
-                    color: Colors.white,
+        GestureDetector(
+          onTap: (){
+           // print("on tap card");
+            Navigator.push(context,MaterialPageRoute(builder: (context)=> DetailPage()));
+          },
+          child: Container(
+            height: MediaQuery.of(context).size.height / 2,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    "assets/outfit.jpeg",
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 15,
-                left: 15,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "New 2020",
-                      style: TextStyle(
-                        color: Colors.pink.shade100,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Positioned(
+                  top: 15,
+                  right: 15,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.pink.shade100,
+                      shape: BoxShape.circle,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Text(
-                        "Modren Outfit Collection",
+                    padding: EdgeInsets.all(4),
+                    child: Icon(
+                      FontAwesomeIcons.heart,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 15,
+                  left: 15,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "New 2020",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.pink.shade100,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: Image.asset(
-                            "assets/profile.png",
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "Finar Surat",
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Text(
+                          "Modren Outfit Collection",
                           style: TextStyle(
-                            color: Colors.pink.shade100,
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                        )
-                      ],
-                    ),
-                  ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset(
+                              "assets/profile.png",
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "Finar Surat",
+                            style: TextStyle(
+                              color: Colors.pink.shade100,
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
