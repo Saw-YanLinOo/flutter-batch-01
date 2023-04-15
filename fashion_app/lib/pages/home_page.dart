@@ -1,9 +1,56 @@
+import 'package:dio/dio.dart';
 import 'package:fashion_app/pages/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class HomePage extends StatelessWidget {
+class RecommendedModel {
+  final String id;
+  final String title;
+  final String image;
+  final String color;
+
+  RecommendedModel({
+    required this.id,
+    required this.title,
+    required this.image,
+    required this.color,
+  });
+
+  factory RecommendedModel.fromJson(dynamic json){
+    return RecommendedModel(
+        id: id,
+        title: title,
+        image: image,
+        color: color
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final Dio _dio = Dio();
+  String recommendedURL =
+      "https://raw.githubusercontent.com/Saw-YanLinOo/Json-Api/master/fashion-recommended-json.json";
+  String trendingForYouURL =
+      "https://raw.githubusercontent.com/Saw-YanLinOo/Json-Api/master/fashion-trending-json.json";
+
+  _fetchRecommendedURL() async {
+    var response = await _dio.get(recommendedURL);
+    print(response.data);
+  }
+
+  @override
+  void initState() {
+    _fetchRecommendedURL();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,11 +216,11 @@ class TrendingForYouSection extends StatelessWidget {
           height: 16,
         ),
         Container(
-          height: MediaQuery.of(context).size.height/2,
+          height: MediaQuery.of(context).size.height / 2,
           child: ListView.builder(
             itemCount: 3,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context,index){
+            itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: TrendingForYouItemView(),
@@ -284,7 +331,6 @@ class TrendingForYouItemView extends StatelessWidget {
     );
   }
 }
-
 
 class HomeAppBarSection extends StatelessWidget {
   const HomeAppBarSection({Key? key}) : super(key: key);
