@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fashion_app/pages/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+class TrendingForYouModel{
+
+}
 
 class RecommendedModel {
   final String id;
@@ -18,10 +24,10 @@ class RecommendedModel {
 
   factory RecommendedModel.fromJson(dynamic json){
     return RecommendedModel(
-        id: id,
-        title: title,
-        image: image,
-        color: color
+        id: json["id"],
+        title: json["title"],
+        image: json["image"],
+        color: json["color"],
     );
   }
 }
@@ -40,15 +46,29 @@ class _HomePageState extends State<HomePage> {
   String trendingForYouURL =
       "https://raw.githubusercontent.com/Saw-YanLinOo/Json-Api/master/fashion-trending-json.json";
 
+  List<RecommendedModel> recommendedList = [];
+
   _fetchRecommendedURL() async {
     var response = await _dio.get(recommendedURL);
-    print(response.data);
+
+
+    List<dynamic> jsonList = jsonDecode(response.data);
+    List<RecommendedModel> result = jsonList.map((e) => RecommendedModel.fromJson(e)).toList();
+    print(result);
+
+    recommendedList = result;
+    setState(() {});
+  }
+
+  _fetchTrendingForYouURL()async{
+    //
+
   }
 
   @override
   void initState() {
     _fetchRecommendedURL();
-
+    _fetchTrendingForYouURL();
     super.initState();
   }
 
@@ -80,7 +100,7 @@ class _HomePageState extends State<HomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: RecommendedSection(title: "Recommended"),
+                child: RecommendedSection(title: "Recommended",list: recommendedList,),
               ),
             ],
           ),
@@ -91,9 +111,10 @@ class _HomePageState extends State<HomePage> {
 }
 
 class RecommendedSection extends StatelessWidget {
-  const RecommendedSection({Key? key, required this.title}) : super(key: key);
+  const RecommendedSection({Key? key, required this.title, required this.list}) : super(key: key);
 
   final String title;
+  final List<RecommendedModel> list;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -120,27 +141,20 @@ class RecommendedSection extends StatelessWidget {
         SizedBox(
           height: 16,
         ),
+
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: [
-            RecommendedItemView(
-              title: "Shoe",
-              image: "assets/shoe.png",
-              color: Colors.pink.shade100,
-            ),
-            RecommendedItemView(
-              title: "Cactus",
-              image: "assets/cactus.png",
-              color: Colors.blue.shade100,
-            ),
-            RecommendedItemView(
-              title: "Cactus",
-              image: "assets/cactus.png",
-              color: Colors.blue.shade100,
-            ),
-          ],
-        ),
+          children: list.map(
+              (data){
+                return RecommendedItemView(
+                    title: data.title,
+                    image: data.image,
+                    color: Color(int.parse(data.color)),
+                );
+              }
+          ).toList(),
+        )
       ],
     );
   }
@@ -172,7 +186,7 @@ class RecommendedItemView extends StatelessWidget {
           Container(
             width: 100,
             height: 100,
-            child: Image.asset(image),
+            child: Image.network(image),
           ),
           Text(
             title,

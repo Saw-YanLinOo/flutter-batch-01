@@ -106,7 +106,7 @@ class _DetailPageState extends State<DetailPage> {
                 SizedBox(height: 16,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: RecommendedSection(title: "Related Outfit"),
+                  child: RecommendedSection(title: "Related Outfit",list: [],),
                 ),
                 SizedBox(height: 100,)
               ],
