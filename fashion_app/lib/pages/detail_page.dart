@@ -2,17 +2,19 @@ import 'package:fashion_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-
 class DetailPage extends StatefulWidget {
-  const DetailPage({Key? key}) : super(key: key);
+  const DetailPage({Key? key, required this.item, required this.list})
+      : super(key: key);
+
+  final TrendingForYouModel item;
+  final List<RecommendedModel> list;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
-
-  List<String> outSizes = ["S","M","L","X","XL"];
+  List<String> outSizes = ["S", "M", "L", "X", "XL"];
   List<Widget> listWidget = [];
 
   @override
@@ -26,8 +28,8 @@ class _DetailPageState extends State<DetailPage> {
             flexibleSpace: Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset(
-                    "assets/outfit.jpeg",
+                  child: Image.network(
+                    "${widget.item.image}",
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -38,7 +40,7 @@ class _DetailPageState extends State<DetailPage> {
                   child: Row(
                     children: [
                       GestureDetector(
-                        onTap:(){
+                        onTap: () {
                           Navigator.pop(context);
                         },
                         child: Icon(
@@ -71,7 +73,9 @@ class _DetailPageState extends State<DetailPage> {
                 SizedBox(
                   height: 20,
                 ),
-                GeneralSection(),
+                GeneralSection(
+                  item: widget.item,
+                ),
                 SizedBox(
                   height: 8,
                 ),
@@ -81,7 +85,7 @@ class _DetailPageState extends State<DetailPage> {
                   childrenPadding: EdgeInsets.symmetric(horizontal: 20),
                   children: [
                     Text(
-                      "A wiki is an online hypertext publication collaboratively edited and managed by its own audience, using a web browser. A typical wiki contains multiple pages for the subjects or scope of the project, and could be either open to the public or limited to use within an organization for maintaining its internal knowledge",
+                      "${widget.item.description}",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
@@ -101,14 +105,21 @@ class _DetailPageState extends State<DetailPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: OutFitSizeSection(outSizes: outSizes),
+                  child: OutFitSizeSection(outSizes: widget.item.sizes ?? []),
                 ),
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: RecommendedSection(title: "Related Outfit",list: [],),
+                  child: RecommendedSection(
+                    title: "Related Outfit",
+                    list: widget.list,
+                  ),
                 ),
-                SizedBox(height: 100,)
+                SizedBox(
+                  height: 100,
+                )
               ],
             ),
           ),
@@ -119,7 +130,10 @@ class _DetailPageState extends State<DetailPage> {
 }
 
 class OutFitSizeSection extends StatelessWidget {
-  const OutFitSizeSection({Key? key,required this.outSizes,}) : super(key: key);
+  const OutFitSizeSection({
+    Key? key,
+    required this.outSizes,
+  }) : super(key: key);
 
   final List<String> outSizes;
   @override
@@ -145,18 +159,20 @@ class OutFitSizeSection extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8,),
+        SizedBox(
+          height: 8,
+        ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: outSizes.map(
-                    (size){
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: OutSizeItemView(size: size,),
-                  );
-                }
-            ).toList(),
+            children: outSizes.map((size) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: OutSizeItemView(
+                  size: size,
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],
@@ -164,9 +180,11 @@ class OutFitSizeSection extends StatelessWidget {
   }
 }
 
-
 class OutSizeItemView extends StatelessWidget {
-  const OutSizeItemView({Key? key,this.size,}) : super(key: key);
+  const OutSizeItemView({
+    Key? key,
+    this.size,
+  }) : super(key: key);
 
   final String? size;
   @override
@@ -191,10 +209,13 @@ class OutSizeItemView extends StatelessWidget {
   }
 }
 
-
 class GeneralSection extends StatelessWidget {
-  const GeneralSection({Key? key}) : super(key: key);
+  const GeneralSection({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
 
+  final TrendingForYouModel item;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -206,14 +227,14 @@ class GeneralSection extends StatelessWidget {
           ),
         ),
         Text(
-          "Modern Blue Jacket",
+          "${item.name}",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
           ),
         ),
         Text(
-          "\$1939",
+          "\$${item.price}",
           style: TextStyle(
             fontSize: 18,
             color: Colors.indigo,

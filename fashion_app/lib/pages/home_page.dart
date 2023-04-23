@@ -5,8 +5,55 @@ import 'package:fashion_app/pages/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class TrendingForYouModel{
+class TrendingForYouModel {
+  TrendingForYouModel({
+    this.id,
+    this.name,
+    this.category,
+    this.image,
+    this.userName,
+    this.userProfile,
+    this.price,
+    this.description,
+    this.sizes,
+  });
 
+  String? id;
+  String? name;
+  String? category;
+  String? image;
+  String? userName;
+  String? userProfile;
+  int? price;
+  String? description;
+  List<String>? sizes;
+
+  factory TrendingForYouModel.fromJson(Map<String, dynamic> json) =>
+      TrendingForYouModel(
+        id: json["id"],
+        name: json["name"],
+        category: json["category"],
+        image: json["image"],
+        userName: json["user_name"],
+        userProfile: json["user_profile"],
+        price: json["price"],
+        description: json["description"],
+        sizes: json["sizes"] == null
+            ? []
+            : List<String>.from(json["sizes"]!.map((x) => x)),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "category": category,
+        "image": image,
+        "user_name": userName,
+        "user_profile": userProfile,
+        "price": price,
+        "description": description,
+        "sizes": sizes == null ? [] : List<dynamic>.from(sizes!.map((x) => x)),
+      };
 }
 
 class RecommendedModel {
@@ -22,12 +69,12 @@ class RecommendedModel {
     required this.color,
   });
 
-  factory RecommendedModel.fromJson(dynamic json){
+  factory RecommendedModel.fromJson(dynamic json) {
     return RecommendedModel(
-        id: json["id"],
-        title: json["title"],
-        image: json["image"],
-        color: json["color"],
+      id: json["id"],
+      title: json["title"],
+      image: json["image"],
+      color: json["color"],
     );
   }
 }
@@ -46,23 +93,31 @@ class _HomePageState extends State<HomePage> {
   String trendingForYouURL =
       "https://raw.githubusercontent.com/Saw-YanLinOo/Json-Api/master/fashion-trending-json.json";
 
+  List<TrendingForYouModel> trendingForYouList = [];
   List<RecommendedModel> recommendedList = [];
 
   _fetchRecommendedURL() async {
     var response = await _dio.get(recommendedURL);
 
-
     List<dynamic> jsonList = jsonDecode(response.data);
-    List<RecommendedModel> result = jsonList.map((e) => RecommendedModel.fromJson(e)).toList();
+    List<RecommendedModel> result =
+        jsonList.map((e) => RecommendedModel.fromJson(e)).toList();
     print(result);
 
     recommendedList = result;
     setState(() {});
   }
 
-  _fetchTrendingForYouURL()async{
-    //
+  _fetchTrendingForYouURL() async {
+    var response = await _dio.get(trendingForYouURL);
 
+    List<dynamic> jsonList = jsonDecode(response.data);
+    List<TrendingForYouModel> result =
+        jsonList.map((e) => TrendingForYouModel.fromJson(e)).toList();
+    print(result);
+
+    trendingForYouList = result;
+    setState(() {});
   }
 
   @override
@@ -93,14 +148,20 @@ class _HomePageState extends State<HomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TrendingForYouSection(),
+                child: TrendingForYouSection(
+                  list: trendingForYouList,
+                  rList: recommendedList,
+                ),
               ),
               SizedBox(
                 height: 16,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: RecommendedSection(title: "Recommended",list: recommendedList,),
+                child: RecommendedSection(
+                  title: "Recommended",
+                  list: recommendedList,
+                ),
               ),
             ],
           ),
@@ -111,7 +172,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 class RecommendedSection extends StatelessWidget {
-  const RecommendedSection({Key? key, required this.title, required this.list}) : super(key: key);
+  const RecommendedSection({Key? key, required this.title, required this.list})
+      : super(key: key);
 
   final String title;
   final List<RecommendedModel> list;
@@ -141,19 +203,16 @@ class RecommendedSection extends StatelessWidget {
         SizedBox(
           height: 16,
         ),
-
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: list.map(
-              (data){
-                return RecommendedItemView(
-                    title: data.title,
-                    image: data.image,
-                    color: Color(int.parse(data.color)),
-                );
-              }
-          ).toList(),
+          children: list.map((data) {
+            return RecommendedItemView(
+              title: data.title,
+              image: data.image,
+              color: Color(int.parse(data.color)),
+            );
+          }).toList(),
         )
       ],
     );
@@ -201,8 +260,14 @@ class RecommendedItemView extends StatelessWidget {
 }
 
 class TrendingForYouSection extends StatelessWidget {
-  const TrendingForYouSection({Key? key}) : super(key: key);
+  const TrendingForYouSection({
+    Key? key,
+    required this.list,
+    required this.rList,
+  }) : super(key: key);
 
+  final List<TrendingForYouModel> list;
+  final List<RecommendedModel> rList;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -232,12 +297,17 @@ class TrendingForYouSection extends StatelessWidget {
         Container(
           height: MediaQuery.of(context).size.height / 2,
           child: ListView.builder(
-            itemCount: 3,
+            itemCount: list.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
+              var item = list[index];
+
               return Padding(
                 padding: const EdgeInsets.only(right: 10),
-                child: TrendingForYouItemView(),
+                child: TrendingForYouItemView(
+                  item: item,
+                  list: rList,
+                ),
               );
             },
           ),
@@ -248,15 +318,24 @@ class TrendingForYouSection extends StatelessWidget {
 }
 
 class TrendingForYouItemView extends StatelessWidget {
-  const TrendingForYouItemView({Key? key}) : super(key: key);
+  const TrendingForYouItemView(
+      {Key? key, required this.item, required this.list})
+      : super(key: key);
 
+  final TrendingForYouModel item;
+  final List<RecommendedModel> list;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         // print("on tap card");
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => DetailPage()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailPage(
+                      item: item,
+                      list: list,
+                    )));
       },
       child: Container(
         height: MediaQuery.of(context).size.height / 2,
@@ -266,8 +345,8 @@ class TrendingForYouItemView extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset(
-                "assets/outfit.jpeg",
+              child: Image.network(
+                item.image ?? "",
                 fit: BoxFit.cover,
               ),
             ),
@@ -293,7 +372,7 @@ class TrendingForYouItemView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "New 2020",
+                    "${item.category}",
                     style: TextStyle(
                       color: Colors.pink.shade100,
                       fontSize: 24,
@@ -303,7 +382,7 @@ class TrendingForYouItemView extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.5,
                     child: Text(
-                      "Modren Outfit Collection",
+                      "${item.name}",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -320,8 +399,8 @@ class TrendingForYouItemView extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                         ),
-                        child: Image.asset(
-                          "assets/profile.png",
+                        child: Image.network(
+                          "${item.userProfile}",
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -329,7 +408,7 @@ class TrendingForYouItemView extends StatelessWidget {
                         width: 4,
                       ),
                       Text(
-                        "Finar Surat",
+                        "${item.userName}",
                         style: TextStyle(
                           color: Colors.pink.shade100,
                         ),
