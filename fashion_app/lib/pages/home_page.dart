@@ -1,169 +1,70 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fashion_app/data/models/trending_for_you_model.dart';
+import 'package:fashion_app/data/remote/dio_data_agent_impl.dart';
+import 'package:fashion_app/data/remote/fashion_data_agent.dart';
+import 'package:fashion_app/data/remote/http_data_agent_impl.dart';
 import 'package:fashion_app/pages/detail_page.dart';
+import 'package:fashion_app/provider/home_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class TrendingForYouModel {
-  TrendingForYouModel({
-    this.id,
-    this.name,
-    this.category,
-    this.image,
-    this.userName,
-    this.userProfile,
-    this.price,
-    this.description,
-    this.sizes,
-  });
+import '../data/models/recommended_model.dart';
+import '../data/remote/api_constant.dart';
+import 'package:provider/provider.dart';
 
-  String? id;
-  String? name;
-  String? category;
-  String? image;
-  String? userName;
-  String? userProfile;
-  int? price;
-  String? description;
-  List<String>? sizes;
-
-  factory TrendingForYouModel.fromJson(Map<String, dynamic> json) =>
-      TrendingForYouModel(
-        id: json["id"],
-        name: json["name"],
-        category: json["category"],
-        image: json["image"],
-        userName: json["user_name"],
-        userProfile: json["user_profile"],
-        price: json["price"],
-        description: json["description"],
-        sizes: json["sizes"] == null
-            ? []
-            : List<String>.from(json["sizes"]!.map((x) => x)),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "category": category,
-        "image": image,
-        "user_name": userName,
-        "user_profile": userProfile,
-        "price": price,
-        "description": description,
-        "sizes": sizes == null ? [] : List<dynamic>.from(sizes!.map((x) => x)),
-      };
-}
-
-class RecommendedModel {
-  final String id;
-  final String title;
-  final String image;
-  final String color;
-
-  RecommendedModel({
-    required this.id,
-    required this.title,
-    required this.image,
-    required this.color,
-  });
-
-  factory RecommendedModel.fromJson(dynamic json) {
-    return RecommendedModel(
-      id: json["id"],
-      title: json["title"],
-      image: json["image"],
-      color: json["color"],
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final Dio _dio = Dio();
-  String recommendedURL =
-      "https://raw.githubusercontent.com/Saw-YanLinOo/Json-Api/master/fashion-recommended-json.json";
-  String trendingForYouURL =
-      "https://raw.githubusercontent.com/Saw-YanLinOo/Json-Api/master/fashion-trending-json.json";
-
-  List<TrendingForYouModel> trendingForYouList = [];
-  List<RecommendedModel> recommendedList = [];
-
-  _fetchRecommendedURL() async {
-    var response = await _dio.get(recommendedURL);
-
-    List<dynamic> jsonList = jsonDecode(response.data);
-    List<RecommendedModel> result =
-        jsonList.map((e) => RecommendedModel.fromJson(e)).toList();
-    print(result);
-
-    recommendedList = result;
-    setState(() {});
-  }
-
-  _fetchTrendingForYouURL() async {
-    var response = await _dio.get(trendingForYouURL);
-
-    List<dynamic> jsonList = jsonDecode(response.data);
-    List<TrendingForYouModel> result =
-        jsonList.map((e) => TrendingForYouModel.fromJson(e)).toList();
-    print(result);
-
-    trendingForYouList = result;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    _fetchRecommendedURL();
-    _fetchTrendingForYouURL();
-    super.initState();
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 16,
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: HomeAppBarSection(),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TrendingForYouSection(
-                  list: trendingForYouList,
-                  rList: recommendedList,
+    return ChangeNotifierProvider(
+      create: (context) => HomePageProvider(),
+      child: SafeArea(
+        child: Scaffold(
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 16,
                 ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: RecommendedSection(
-                  title: "Recommended",
-                  list: recommendedList,
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: HomeAppBarSection(),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 24,
+                ),
+                Consumer<HomePageProvider>(
+                  builder: (context, provider, child) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TrendingForYouSection(
+                        list: provider.trendingForYouList,
+                        rList: provider.recommendedList,
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Consumer<HomePageProvider>(
+                  builder: (context, provider, child) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: RecommendedSection(
+                        title: "Recommended",
+                        list: provider.recommendedList,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

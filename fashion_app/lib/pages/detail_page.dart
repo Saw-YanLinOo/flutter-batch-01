@@ -2,6 +2,9 @@ import 'package:fashion_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../data/models/recommended_model.dart';
+import '../data/models/trending_for_you_model.dart';
+
 class DetailPage extends StatefulWidget {
   const DetailPage({Key? key, required this.item, required this.list})
       : super(key: key);
